@@ -157,7 +157,7 @@
                 </div>
             </div>
         </div>
-        <?php wp_enqueue_style( 'styles', '/wp-content/plugins/Postali_staging/staging.css'); ?>
+        <?php wp_enqueue_style( 'styles', '/wp-content/plugins/Postali_staging-main/staging.css'); ?>
         <script>
             jQuery( function($){ 
                 $('#notice-close').click( function() {
