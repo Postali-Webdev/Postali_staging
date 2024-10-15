@@ -52,7 +52,7 @@
                         'name' => 'staging_url',
                         'type' => 'text',
                         'prefix' => '',
-                        'instructions' => 'Please enter the full path URL to the staging site, including https://',
+                        'instructions' => 'Please enter the staging domain name. <strong>*IMPORTANT: Do NOT include https:// at the beginning and .com at the end.</strong>',
                         'required' => 0,
                         'wrapper' => array (
                             'width' => '',
@@ -103,14 +103,13 @@
     $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $currentDomain = parse_url($currentUrl, PHP_URL_HOST);
     $currentDomain = str_replace('www.', '', $currentDomain);
-    $staging_url = get_field('field_enableBanner','options');
+    $staging_url = 'https://' . get_field('field_enableBanner','options') . '.com';
     
     if (strpos($staging_url, $currentDomain) !== false) {
         $isStaging = true;
     } else {
         $isStaging = false;
     }
-    //echo 'test: '. $isStaging;
     ?>
 
     <?php if(get_field('enable_banner','options')=='on' && !$isStaging) { 
@@ -134,10 +133,7 @@
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
-        //echo $response;
-
         $_SESSION['staging_notice_on'] = true; // Set the flag to indicate that the code has been executed
     }
     
@@ -170,7 +166,6 @@
 
     <?php } elseif(get_field('enable_banner','options')=='off') { 
 
-    
 
     if ( $_SESSION['staging_notice_off'] != true && !$isStaging ) { // Check if the code has already been executed
         $curl = curl_init();
@@ -191,10 +186,7 @@
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
-        //echo $response;
-
         $_SESSION['staging_notice_off'] = true; // Set the flag to indicate that the code has been executed
     }
 
