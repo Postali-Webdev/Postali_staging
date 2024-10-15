@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Postali - Add Staging Banner
 * Description: Adds notification banner when placing site into staging. 
-* Version: 1.0
+* Version: 1.1
 * Author: Postali
 * Author URI: https://www.postali.com
 */
@@ -128,25 +128,69 @@ if (!function_exists('write_log')) {
     }
 }
 
+
 // Add Staging Lightbox
 function staging_admin_notice() {
-    session_start(); // Start the session
+    $staging_status = get_field('enable_banner','options');
     $site_name = get_bloginfo( 'name' ); 
-    $oauth_token = get_field('slack_token','options');
     $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $currentDomain = parse_url($currentUrl, PHP_URL_HOST);
     $currentDomain = str_replace('www.', '', $currentDomain);
-    $staging_url = 'https://' . get_field('field_enableBanner','options') . '.com';
-
-    if (strpos($staging_url, $currentDomain) !== false) {
+    $staging_url = 'https://' . get_field('staging_url','options') . '.com';
+    if ( strpos($staging_url, $currentDomain) !== false ) {
         $isStaging = true;
     } else {
         $isStaging = false;
     }
+    if( $staging_status == 'on' && !$isStaging) : ?>
+        <div id="notice-overlay">~
+            <div id="staging-notice">
+                <div id="notice-top">
+                    <div id="notice-top-inner"><span class="notice-icon" id="notice-alert">&#9888; </span><span id="notice-title">POSTALI NOTICE:</span></div>
+                    <p>Site is currently in staging</p> 
+                    <span class="notice-icon" id="notice-close">&#10005;</span>
+                </div>
+                <div id="notice-bottom">
+                    <p>Proceed to the staging url before making changes: <a href="<?php echo $staging_url; ?>" title="Staging url"><?php echo $staging_url; ?></a></p>
+                    <p>Changes made here may be overwritten and lost. </br>Contact Development for more information.</p>
+                </div>
+            </div>
+        </div>
+        <?php wp_enqueue_style( 'styles', '/wp-content/plugins/Postali_staging-main/staging.css'); ?>
+        <script>
+            jQuery( function($){ 
+                $('#notice-close').click( function() {
+                    $('#notice-overlay').css('display', 'none');
+                    $('#wpcontent').css('overflow', 'revert').css('position', 'revert').css('padding-left', '20px');
+                });
+            });
+        </script>
+    <?php endif;
+}
+add_action('admin_notices', 'staging_admin_notice');
 
-    if(get_field('enable_banner','options')=='on' && !$isStaging) { 
 
-        if ( $_SESSION['staging_notice_on'] != true ) { // Check if the code has already been executed
+
+function handle_staging_page_update( $post_id ) {
+    $options_page = get_current_screen();
+    // Check if the updated post is an options page
+    if ( $options_page->id === 'toplevel_page_staging' ) {
+        // Get the updated field value
+        $staging_status = get_field('enable_banner','options');
+        $site_name = get_bloginfo( 'name' ); 
+        $oauth_token = get_field('slack_token','options');
+        $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $currentDomain = parse_url($currentUrl, PHP_URL_HOST);
+        $currentDomain = str_replace('www.', '', $currentDomain);
+        $staging_url = 'https://' . get_field('staging_url','options') . '.com';
+
+        if ( strpos($staging_url, $currentDomain) !== false ) {
+            $isStaging = true;
+        } else {
+            $isStaging = false;
+        }
+
+        if( $staging_status == 'on' && !$isStaging ) { 
             $notification_text = json_encode($site_name . ' is currently in staging');
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -173,42 +217,8 @@ function staging_admin_notice() {
             curl_close($curl);
             // logging  response
             //write_log( [ 'response' => $response, ] );
-
-            $_SESSION['staging_notice_on'] = true; // Set the flag to indicate that the code has been executed
-        }
-
-    $_SESSION['staging_notice_off'] = false;
-
-    if( !$isStaging ) : ?>
-        <div id="notice-overlay">
-            <div id="staging-notice">
-                <div id="notice-top">
-                    <div id="notice-top-inner"><span class="notice-icon" id="notice-alert">&#9888; </span><span id="notice-title">POSTALI NOTICE:</span></div>
-                    <p>Site is currently in staging</p> 
-                    <span class="notice-icon" id="notice-close">&#10005;</span>
-                </div>
-                <div id="notice-bottom">
-                    <p>Proceed to the staging url before making changes: <a href="<?php echo $staging_url; ?>" title="Staging url"><?php echo $staging_url; ?></a></p>
-                    <p>Changes made here may be overwritten and lost. </br>Contact Development for more information.</p>
-                </div>
-            </div>
-        </div>
-        <?php wp_enqueue_style( 'styles', '/wp-content/plugins/Postali_staging-main/staging.css'); ?>
-        <script>
-            jQuery( function($){ 
-                $('#notice-close').click( function() {
-                    $('#notice-overlay').css('display', 'none');
-                    $('#wpcontent').css('overflow', 'revert').css('position', 'revert').css('padding-left', '20px');
-                });
-            });
-        </script>
-    <?php endif; ?>
-
-    <?php } elseif(get_field('enable_banner','options')=='off') { 
-
-        if ( $_SESSION['staging_notice_off'] != true && !$isStaging ) { // Check if the code has already been executed
+        } elseif( $staging_status == 'off' && !$isStaging ) {
             $notification_text = json_encode($site_name . ' is out of staging');
-            
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://slack.com/api/chat.postMessage',
@@ -229,14 +239,12 @@ function staging_admin_notice() {
                     "Authorization: Bearer $oauth_token"
                 ),
             ));
-
             $response = curl_exec($curl);
             curl_close($curl);
+            // logging  response
             //write_log( [ 'response' => $response, ] );
-            $_SESSION['staging_notice_off'] = true; // Set the flag to indicate that the code has been executed
-        }
-        $_SESSION['staging_notice_on'] = false;
-    }   
+        }   
+    }
 }
-add_action('admin_notices', 'staging_admin_notice');
+add_action('acf/options_page/save', 'handle_staging_page_update', 10, 1);
 ?>
