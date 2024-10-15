@@ -1,0 +1,67 @@
+#wpcontent {
+        overflow: hidden;
+        position: absolute;
+        padding-left: 0;
+    }
+    #staging-notice {
+        position: relative;
+    }
+    #notice-overlay {
+        height: 100%;
+        width: 100%;
+        background: rgba(0, 0, 0, .5);
+        position: absolute;
+        z-index: 100;
+    }
+    #staging-notice {
+        border: 4px solid #3d3d39;
+        width: 60%;
+        margin: 150px auto;
+        background: white;
+    }
+    #notice-top {
+        background-color: #cc0808; 
+        color: #efeedf; 
+        padding: 30px; 
+        border-bottom: 2px solid #3d3d39;
+    }
+    #notice-top p {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+    #notice-top-inner {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding-top: 20px;
+    }
+    #notice-top #notice-title {
+        text-decoration: underline;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+    #notice-top #notice-alert {
+        font-size: 30px;
+        padding-right: 5px;
+    }
+    #notice-top #notice-close {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        font-size: 24px;
+    }
+    #notice-top #notice-close:hover {
+        color: black;
+        cursor: pointer;
+    }
+    #notice-bottom {
+        padding: 45px 30px;
+    }
+    #notice-bottom p,
+    #notice-bottom p a {
+        font-size: 16px;
+        text-align: center;
+    }
