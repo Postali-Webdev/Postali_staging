@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Postali - Add Staging Banner
 * Description: Adds notification banner when placing site into staging. 
-* Version: 1.1.4
+* Version: 1.1.5
 * Author: Postali
 * Author URI: https://www.postali.com
 */
@@ -176,50 +176,6 @@ if (!function_exists('write_log')) {
         }
     }
 }
-
-
-// Add Staging Lightbox
-function staging_admin_notice() {
-    $staging_status = get_field('enable_banner','options');
-    $staging_username = get_field('staging_username','options');
-    $staging_password = get_field('staging_password','options');
-    $site_name = get_bloginfo( 'name' ); 
-    $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    $currentDomain = parse_url($currentUrl, PHP_URL_HOST);
-    $currentDomain = str_replace('www.', '', $currentDomain);
-    $staging_url = 'https://' . get_field('staging_url','options') . '.com';
-    if ( strpos($staging_url, $currentDomain) !== false ) {
-        $isStaging = true;
-    } else {
-        $isStaging = false;
-    }
-    if( $staging_status == 'on' && !$isStaging) : ?>
-        <div id="notice-overlay">~
-            <div id="staging-notice">
-                <div id="notice-top">
-                    <div id="notice-top-inner"><span class="notice-icon" id="notice-alert">&#9888; </span><span id="notice-title">POSTALI NOTICE:</span></div>
-                    <p>Site is currently in staging</p> 
-                    <span class="notice-icon" id="notice-close">&#10005;</span>
-                </div>
-                <div id="notice-bottom">
-                    <p>Proceed to the staging url before making changes: <a href="<?php echo $staging_url; ?>" title="Staging url"><?php echo $staging_url; ?></a></p>
-                    <p><strong>Staging Username:</strong> <?php echo $staging_username; ?> &nbsp; | &nbsp; <strong>Staging Password:</strong> <?php echo $staging_password; ?></p>
-                    <p>Changes made here may be overwritten and lost. </br>Contact Development for more information.</p>
-                </div>
-            </div>
-        </div>
-        <?php wp_enqueue_style( 'styles', '/wp-content/plugins/Postali_staging-main/staging.css'); ?>
-        <script>
-            jQuery( function($){ 
-                $('#notice-close').click( function() {
-                    $('#notice-overlay').css('display', 'none');
-                    $('#wpcontent').css('overflow', 'revert').css('position', 'revert').css('padding-left', '20px');
-                });
-            });
-        </script>
-    <?php endif;
-}
-add_action('admin_notices', 'staging_admin_notice');
 
 
 
