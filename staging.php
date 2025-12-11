@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Postali - Add Staging Banner
 * Description: Adds notification banner when placing site into staging. 
-* Version: 2.0
+* Version: 2.0.5
 * Author: Postali Webdev
 * Author URI: https://www.postali.com
 */
@@ -29,11 +29,11 @@ function add_acf_field_function() {
 
         acf_add_local_field_group(array (
             'key' => 'group_1',
-            'title' => 'Staging URL',
+            'title' => 'Staging Notifications',
             'fields' => array (
                 array (
                     'key' => 'field_stagingURL',
-                    'label' => 'Toggle staging banner on',
+                    'label' => 'Send notification to client slack channel:',
                     'name' => 'enable_banner',
                     'type' => 'radio',
                     'wrapper' => array (
@@ -42,83 +42,9 @@ function add_acf_field_function() {
                         'id' => '',
                     ),
                     'choices' => array(
-                        'on' => 'On',
-                        'off' => 'Off',
+                        'on' => 'Going into staging',
+                        'off' => 'Coming out of staging',
                     ),
-                ),
-                array (
-                    'key' => 'field_enableBanner',
-                    'label' => 'Staging URL',
-                    'name' => 'staging_url',
-                    'type' => 'text',
-                    'prefix' => '',
-                    'instructions' => 'Please enter the staging domain name. <strong>*IMPORTANT: Do NOT include https:// at the beginning and .com at the end.</strong>',
-                    'required' => 0,
-                    'wrapper' => array (
-                        'width' => '',
-                        'class' => '',
-                        'id' => '',
-                    ),
-
-                    'conditional_logic' => array (
-                        'field' => 'field_stagingURL',
-                        'operator' => '==',
-                        'value' => 'on',
-                    ),
-
-                    'default_value' => '',
-                    'placeholder' => '',
-                    'prepend' => '',
-                    'append' => '',
-                    'maxlength' => '',
-                    'readonly' => 0,
-                    'disabled' => 0,
-                ),
-
-                array (
-                    'key' => 'field_stagingUsername',
-                    'label' => 'Staging Username',
-                    'name' => 'staging_username',
-                    'type' => 'text',
-                    'prefix' => '',
-                    'instructions' => '',
-                    'required' => 0,
-                    'wrapper' => array (
-                        'width' => '',
-                        'class' => '',
-                        'id' => '',
-                    ),
-
-                    'default_value' => '',
-                    'placeholder' => '',
-                    'prepend' => '',
-                    'append' => '',
-                    'maxlength' => '',
-                    'readonly' => 0,
-                    'disabled' => 0,
-                ),
-
-                array (
-                    'key' => 'field_stagingPassword',
-                    'label' => 'Staging Password',
-                    'name' => 'staging_password',
-                    'type' => 'text',
-                    'prefix' => '',
-                    'instructions' => '',
-                    'required' => 0,
-                    'wrapper' => array (
-                        'width' => '',
-                        'class' => '',
-                        'id' => '',
-                    ),
-
-                    'default_value' => '',
-                    'placeholder' => '',
-                    'prepend' => '',
-                    'append' => '',
-                    'maxlength' => '',
-                    'readonly' => 0,
-                    'disabled' => 0,
                 ),
 
 
