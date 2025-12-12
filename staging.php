@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Postali - Add Staging Banner
 * Description: Adds notification banner when placing site into staging. 
-* Version: 2.0.5
+* Version: 2.1.0
 * Author: Postali Webdev
 * Author URI: https://www.postali.com
 */
@@ -182,9 +182,9 @@ function handle_staging_page_update( $post_id ) {
 }
 add_action('acf/options_page/save', 'handle_staging_page_update', 10, 1);
 
-require_once( 'BFIGitHubPluginUploader.php' );
+require_once( 'PostaliStagingPluginUploader.php' );
 if ( is_admin() ) {
-    new BFIGitHubPluginUpdater( __FILE__, 'Postali-Webdev', "Postali_staging" );
+    new PostaliStagingPluginUploader( __FILE__, 'Postali-Webdev', "Postali_staging" );
 }
 
 ?>
